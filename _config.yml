@@ -20,7 +20,7 @@ email: bu2github@gmail.com
 #   line in _config.yml. It will appear in your document head meta (for
 #   Google search results) and in your feed.xml site description.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://bu2.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username:  bu2adaptive
 github_username:   bu2
 linkedin_username: blehyaric
