@@ -32,4 +32,8 @@
 
   </div>
 
+  {%- if jekyll.environment == 'production' -%}
+    {%- include fingerprintjs2.html -%}
+  {%- endif -%}
+
 </footer>

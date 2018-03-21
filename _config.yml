@@ -15,12 +15,10 @@
 # in the templates via {{ site.myvariable }}.
 title: T4SH
 email: bu2github@gmail.com
-# description: >- # this means to ignore newlines until "baseurl:"
-#   Write an awesome description for your new site here. You can edit this
-#   line in _config.yml. It will appear in your document head meta (for
-#   Google search results) and in your feed.xml site description.
+description: >- # this means to ignore newlines until "baseurl:"
+  Technology for Super Humans
 baseurl: "/" # the subpath of your site, e.g. /blog
-url: "https://bu2.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://t4sh.com" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username:  bu2adaptive
 github_username:   bu2
 linkedin_username: blehyaric
