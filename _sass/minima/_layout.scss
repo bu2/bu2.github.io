@@ -16,7 +16,7 @@
   line-height: $base-line-height * $base-font-size * 2.25;
   letter-spacing: -1px;
   margin-bottom: 0;
-  float: left;
+  // float: left;
 
   &,
   &:visited,
@@ -179,6 +179,8 @@
  */
 .page-content {
   padding: $spacing-unit 0;
+  text-align: justify;
+  font-size: large;
 }
 
 .page-heading {
