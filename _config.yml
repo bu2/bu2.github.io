@@ -16,7 +16,7 @@
 title: T4SH
 email: bu2github@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Technology for Super Humans
+  Tech for Super Humans
 baseurl: "/" # the subpath of your site, e.g. /blog
 url: "https://t4sh.com" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username:  bu2adaptive
@@ -42,3 +42,5 @@ theme: minima
 #   - vendor/ruby/
 
 google_analytics: UA-116051460-1
+
+show_excerpts: true

@@ -1,12 +1,10 @@
 ---
 layout: post
 title:  "Ignition - Roasting eggs on Amazon AWS with Python, Spark, Pandas and Scipy: Part I (The Context)"
-date:   2018-04-04
+date:   2018-04-08
 ---
 
-Project code name "Ignition" is about scaling some [PySpark](http://spark.apache.org/) computation for timeseries processing. The target is to process 1TB of timeseries on different hardware setups and extract metrics like execution time or AWS related costs.
-
-This first part introduces the context: the data and the computation that will be the subject of this experiment. The following parts will cover the performance, scalability and cost on Amazon AWS.
+Project code name "Ignition" is about scaling some [PySpark](http://spark.apache.org/) computation for timeseries processing on [Amazon AWS](https://aws.amazon.com). The target is to process 1TB of timeseries on different hardware setups and extract metrics like execution time or AWS related costs. This first part introduces the context: the data and the computation that will be the subject of this experiment. The following parts will cover the performance, scalability and cost on AWS.
 
 Regarding the data, here is an interesting dataset: [The MIMIC-III Waveform Database Matched Subset](https://physionet.org/physiobank/database/mimic3wdb/matched/).
 
@@ -23,21 +21,25 @@ _**Initialise the Spark session in order to use the Spark SQL DataFrame API.**_
 ```python
 %%time
 
-spark = pyspark.sql.SparkSession        \
-                   .builder             \
-                   .appName('ignition') \
-                   .getOrCreate()
+spark = pyspark.sql                 \
+               .SparkSession        \
+               .builder             \
+               .appName('ignition') \
+               .getOrCreate()
 ```
 
     CPU times: user 8 ms, sys: 8 ms, total: 16 ms
-    Wall time: 1.7 s
+    Wall time: 1.78 s
 
 
 _**Load the list of parquet files composing the dataset.**_
 
 
 ```python
-sdf = spark.read.csv('parquet_files.csv', header=True, inferSchema=True)
+sdf = spark.read \
+           .csv('parquet_files.csv',
+                header=True,
+                inferSchema=True)
 sdf.limit(10).toPandas()
 ```
 
@@ -45,7 +47,7 @@ sdf.limit(10).toPandas()
 
 
 <div>
-<style scoped>
+<!-- <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
     }
@@ -57,7 +59,7 @@ sdf.limit(10).toPandas()
     .dataframe thead th {
         text-align: right;
     }
-</style>
+</style> -->
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -162,9 +164,16 @@ _**Take one row and print the Parquet file size.**_
 
 
 ```python
-row = list(map( lambda row: (row.record_id, row.file, row.size),
-                sdf.select('record_id', 'file', 'size').take(1) ))[0]
+row = list(
+    map(lambda row: (row.record_id,
+                     row.file,
+                     row.size),
+        sdf.select('record_id',
+                   'file',
+                   'size') \
+           .take(1)))[0]
 record_id, parquet_file, size = row
+
 print('Parquet files size: %d bytes' % size)
 ```
 
@@ -177,7 +186,7 @@ _**Read the parquet file with Pandas (using [Apache Arrow](https://arrow.apache.
 ```python
 %%time
 
-pdf = pandas.read_parquet(parquet_file)
+pdf = pd.read_parquet(parquet_file)
 
 print('Number of rows: %d' % len(pdf))
 print('Memory usage: %d bytes' % pdf.memory_usage().sum())
@@ -185,8 +194,8 @@ print('Memory usage: %d bytes' % pdf.memory_usage().sum())
 
     Number of rows: 10000000
     Memory usage: 400000000 bytes
-    CPU times: user 1.36 s, sys: 320 ms, total: 1.68 s
-    Wall time: 1.66 s
+    CPU times: user 1.45 s, sys: 456 ms, total: 1.9 s
+    Wall time: 1.84 s
 
 
 Without Parquet data compression, the size of one block of data in memory is 400MB.
@@ -273,7 +282,9 @@ _**Pivot data to tranform the dataset from narrow format to wide format** (but b
 ```python
 %%time
 
-pdf = pdf.pivot(index='time', columns='parameter', values='value')
+pdf = pdf.pivot(index='time',
+                columns='parameter',
+                values='value')
 pdf.sort_index(inplace=True)
 
 print('Number of rows: %d' % len(pdf))
@@ -282,8 +293,8 @@ print('Memory usage: %d bytes' % pdf.memory_usage().sum())
 
     Number of rows: 10000000
     Memory usage: 160000000 bytes
-    CPU times: user 3.36 s, sys: 320 ms, total: 3.68 s
-    Wall time: 3.68 s
+    CPU times: user 3.51 s, sys: 896 ms, total: 4.41 s
+    Wall time: 4.41 s
 
 
 While removing columns "record" and "parameter" the pivot is reducing the size of the data to 160MB.
@@ -352,12 +363,12 @@ _**Plot the 10 first seconds of signal** (and fortunately it looks like heart be
 
 
 ```python
-pdf[:125*10].plot(figsize=(16, 4))
+pdf[:125*10].plot(figsize=(18, 4))
 plt.show()
 ```
 
 
-![png](/assets/img/2018-04-04-ignition-part1_23_0.png)
+![png](/assets/img/2018-04-08-ignition-part1_23_0.png)
 
 
 _**Clean and down sample the data (from 125Hz to 16Hz)**_
@@ -369,7 +380,9 @@ raw_pdf = pdf
 # RATE = 16
 
 pdf = pdf.fillna(method='ffill')
-pdf = pdf.resample('%dus' % int(1000000 / RATE)).mean()
+pdf = pdf.resample(
+    '%dus' % int(1000000 / RATE)
+).mean()
 
 print('Number of rows: %d' % len(pdf))
 print('Memory usage: %d bytes' % pdf.memory_usage().sum())
@@ -441,12 +454,12 @@ _**Plot the down sampled signal**_
 
 
 ```python
-pdf[:RATE*10].plot(figsize=(16, 4))
+pdf[:RATE*10].plot(figsize=(18, 4))
 plt.show()
 ```
 
 
-![png](/assets/img/2018-04-04-ignition-part1_28_0.png)
+![png](/assets/img/2018-04-08-ignition-part1_28_0.png)
 
 
 The down sampled signal shows less noise but the peak's amplitude has been affected too (around 0.30 when it was 0.60 in the raw signal)
@@ -458,21 +471,30 @@ _**Here is the computation that will be applied on the signal**_
 def extract_features(pdf):
     result_pdf = None
     for column in pdf.columns:
-        local_mins = argrelextrema(pdf[column].values, np.less)[0]
-        local_maxs = argrelextrema(pdf[column].values, np.greater)[0]
-        local_minmaxs = np.sort(np.concatenate((local_mins, local_maxs)))
+
+        local_mins = argrelextrema(
+            pdf[column].values, np.less
+        )[0]
+
+        local_maxs = argrelextrema(
+            pdf[column].values, np.greater
+        )[0]
+
+        local_minmaxs = np.sort(
+            np.concatenate((local_mins, local_maxs))
+        )
 
         if result_pdf is None:
-            result_pdf = pandas.DataFrame()
+            result_pdf = pd.DataFrame()
             result_pdf[column] = pdf[column][local_minmaxs]
         else:
-            tmp_pdf = pandas.DataFrame()
+            tmp_pdf = pd.DataFrame()
             tmp_pdf[column] = pdf[column][local_minmaxs]
-            result_pdf = pandas.merge( result_pdf,
-                                       tmp_pdf,
-                                       left_index=True,
-                                       right_index=True,
-                                       how='outer' )
+            result_pdf = pd.merge(result_pdf,
+                                  tmp_pdf,
+                                  left_index=True,
+                                  right_index=True,
+                                  how='outer' )
     return result_pdf
 ```
 
@@ -490,20 +512,10 @@ print('Number of rows: %d' % len(result_pdf))
 print('Memory usage: %d bytes' % result_pdf.memory_usage().sum())
 ```
 
-    /opt/conda/lib/python3.6/site-packages/scipy/signal/_peak_finding.py:68: RuntimeWarning: invalid value encountered in less
-      results &= comparator(main, plus)
-    /opt/conda/lib/python3.6/site-packages/scipy/signal/_peak_finding.py:69: RuntimeWarning: invalid value encountered in less
-      results &= comparator(main, minus)
-    /opt/conda/lib/python3.6/site-packages/scipy/signal/_peak_finding.py:68: RuntimeWarning: invalid value encountered in greater
-      results &= comparator(main, plus)
-    /opt/conda/lib/python3.6/site-packages/scipy/signal/_peak_finding.py:69: RuntimeWarning: invalid value encountered in greater
-      results &= comparator(main, minus)
-
-
     Number of rows: 610660
     Memory usage: 9770560 bytes
-    CPU times: user 1.19 s, sys: 12 ms, total: 1.2 s
-    Wall time: 1.2 s
+    CPU times: user 1.22 s, sys: 20 ms, total: 1.24 s
+    Wall time: 1.24 s
 
 
 The resulting data is now about 600000 rows and 10MB.
@@ -572,44 +584,56 @@ _**Plot results on the down sampled signal**_
 
 
 ```python
-plt.figure(figsize=(16, 4))
+plt.figure(figsize=(18, 4))
 
 ax = plt.subplot('111')
 pdf[:RATE*10].plot(ax=ax)
-result_pdf[:pdf.index[RATE*10]].plot(ax=ax, title='downsampled', color='r', style=':', marker='x', legend=False)
+result_pdf[:pdf.index[RATE*10]].plot(
+    ax=ax,
+    title='downsampled',
+    color='r',
+    style=':',
+    marker='x',
+    legend=False
+)
 
 plt.show()
 ```
 
 
-![png](/assets/img/2018-04-04-ignition-part1_38_0.png)
+![png](/assets/img/2018-04-08-ignition-part1_38_0.png)
 
 
 At first sight, the detected relative extrema (coupled with linear interpolation) look like a good signal approximation but it is not defect free:
-![DEFECTS](/assets/img/2018-04-04-ignition-part1_30_0_annotated.png)
+![DEFECTS](/assets/img/2018-04-08-ignition-part1_30_0_annotated.png)
 
 _**Plot results over the original signal**_
 
 
 ```python
-plt.figure(figsize=(16, 4))
+plt.figure(figsize=(18, 4))
 
 ax = plt.subplot('111')
 raw_pdf[:125*10].plot(ax=ax)
-result_pdf[:pdf.index[RATE*10]].plot(ax=ax, title='raw', color='r', style=':', marker='x', legend=False)
+result_pdf[:pdf.index[RATE*10]].plot(
+    ax=ax,
+    title='raw',
+    color='r',
+    style=':',
+    marker='x',
+    legend=False
+)
 
 plt.show()
 ```
 
 
-![png](/assets/img/2018-04-04-ignition-part1_41_0.png)
+![png](/assets/img/2018-04-08-ignition-part1_41_0.png)
 
 
 Compared to the raw signal, the approximation looks even worse given that we miss all maximum peaks.
 
 
-So here is the context. We will process heart beat signals by blocks of 10 millions samples to detect local extrema. And we will do that on 1TB of data.
-
-To give you an idea, it takes around 40 seconds to process the exemple of signal of this blog on one core of an Intel Core i7-6700K CPU. Using the 8 cores of the same CPU with 32GB of memory, it takes around 14 hours to process the full dataset (which total size is just under 1.2TB).
+So here is the context. We will process heart beat signals by blocks of 10 millions samples to detect local extrema. And we will do that on 1TB of data. To give you an idea, it takes around 40 seconds to process the example of signal of this blog post on one core of an Intel Core i7-6700K CPU. Using the 8 cores of the same CPU with 32GB of memory, it takes around 14 hours to process the full dataset (which total size is just under 1.2TB).
 
 In Part II we will see how to distribute this significant piece of processing on AWS using EC2 and S3.

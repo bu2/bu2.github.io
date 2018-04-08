@@ -17,13 +17,20 @@
   letter-spacing: -1px;
   margin-bottom: 0;
   // float: left;
+}
 
+a.site-title {
   &,
   &:visited,
   &:hover {
-    color: $grey-color-dark;
+    color: #37c;
+    font-weight: bold;
     text-decoration: none;
   }
+}
+
+span.site-title {
+  display: inline-block;
 }
 
 .site-nav {
@@ -255,4 +262,39 @@
       @include relative-font-size(1.125);
     }
   }
+}
+
+// Tune Pandas dataframe table output for mobile screens
+
+.post-content div {
+  overflow: auto;
+}
+
+.dataframe {
+  max-width: 100%;
+  font-size: small;
+
+  thead th {
+    text-align: center !important;
+  }
+
+  tbody tr th {
+    width: 0;
+    text-align: left;
+  }
+}
+
+table tr {
+  margin: 0;
+  padding: 0;
+}
+
+table th, table td {
+  margin: 0;
+  padding-left: 3px !important;
+  padding-right: 3px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+
+  white-space: nowrap;
 }
