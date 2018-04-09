@@ -637,3 +637,6 @@ Compared to the raw signal, the approximation looks even worse given that we mis
 So here is the context. We will process heart beat signals by blocks of 10 millions samples to detect local extrema. And we will do that on 1TB of data. To give you an idea, it takes around 40 seconds to process the example of signal of this blog post on one core of an Intel Core i7-6700K CPU. Using the 8 cores of the same CPU with 32GB of memory, it takes around 14 hours to process the full dataset (which total size is just under 1.2TB).
 
 In Part II we will see how to distribute this significant piece of processing on AWS using EC2 and S3.
+
+
+[See the notebook on GitHub](https://github.com/bu2/ignition/blob/master/part1/2018-04-08-ignition-part1.ipynb)
