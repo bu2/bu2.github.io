@@ -2,6 +2,7 @@
 layout: post
 title:  "Ignition - Roasting eggs on Amazon AWS with Python, Spark, Pandas and Scipy: Part I (The Context)"
 date:   2018-04-08
+comments: true
 ---
 
 Project code name "Ignition" is about scaling some [PySpark](http://spark.apache.org/) computation for timeseries processing on [Amazon AWS](https://aws.amazon.com). The target is to process 1TB of timeseries on different hardware setups and extract metrics like execution time or AWS related costs. This first part introduces the context: the data and the computation that will be the subject of this experiment. The following parts will cover the performance, scalability and cost on AWS.

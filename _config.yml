@@ -41,6 +41,9 @@ theme: minima
 #   - vendor/gems/
 #   - vendor/ruby/
 
+show_excerpts: true
+
 google_analytics: UA-116051460-1
 
-show_excerpts: true
+disqus:
+  shortname: t4sh
