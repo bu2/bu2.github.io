@@ -9,7 +9,7 @@ Project code name "Ignition" is about scaling some [PySpark](http://spark.apache
 
 Regarding the data, here is an interesting dataset: [The MIMIC-III Waveform Database Matched Subset](https://physionet.org/physiobank/database/mimic3wdb/matched/).
 
-This dataset contains thousands of [ECG recordings](https://en.wikipedia.org/wiki/Electrocardiography) which consist in hear beat signals with a rate of 125 samples per second. As the data comes in a specific format called [WFDB](https://physionet.org/physiotools/wfdb.shtml), WFDB files were converted to [Parquet](https://parquet.apache.org/) file format.
+This dataset contains thousands of [ECG recordings](https://en.wikipedia.org/wiki/Electrocardiography) which consist in heart beat signals with a rate of 125 samples per second. As the data comes in a specific format called [WFDB](https://physionet.org/physiotools/wfdb.shtml), WFDB files were converted to [Parquet](https://parquet.apache.org/) file format.
 
 In this first part, PySpark will be used to distribute the computation on a local Spark Standalone installation.
 
