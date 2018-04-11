@@ -463,7 +463,7 @@ plt.show()
 ![png](/assets/img/2018-04-08-ignition-part1_28_0.png)
 
 
-The down sampled signal shows less noise but the peak's amplitude has been affected too (around 0.30 when it was 0.60 in the raw signal)
+The down sampled signal shows less noise but the peak's amplitude has been affected too (around 0.30 when it was 0.60 in the raw signal).
 
 _**Here is the computation that will be applied on the signal**_
 
