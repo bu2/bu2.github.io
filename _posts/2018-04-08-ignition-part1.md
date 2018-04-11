@@ -605,7 +605,7 @@ plt.show()
 ![png](/assets/img/2018-04-08-ignition-part1_38_0.png)
 
 
-At first sight, the detected relative extrema (coupled with linear interpolation) look like a good signal approximation but it is not defect free:
+At first sight, the detected relative extrema (coupled with linear interpolation) look like a good signal approximation but it is not defect free:<br/>
 ![DEFECTS](/assets/img/2018-04-08-ignition-part1_30_0_annotated.png)
 
 _**Plot results over the original signal**_
